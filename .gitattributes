@@ -1,0 +1,3 @@
+mocks/*.go -diff
+*pb.go -diff
+*gen.go -diff

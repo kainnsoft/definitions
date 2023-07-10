@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package client;
+option go_package = "gitlab.fbs-d.com/definitions/client;client";
+
+message Client {
+    string ip = 1;
+    string host = 2;
+    string domain = 3;
+    string userAgent = 4;
+    string language = 5;
+    string location = 6;
+    int64 userId = 7;
+    string platform = 8;
+    string source = 9;
+    Analytics analytics = 11;
+    int64 applicationId = 12;
+    int64 version = 13;
+    string role = 14;
+    Utm utm = 15;
+    GoogleIds googleIds = 16;
+    FbIds fbIds = 17;
+}
+
+message Analytics {
+    string appsFlyerId = 1;
+    string fireBaseId = 2;
+    string advertisingId = 3;
+    string fireBaseAppInstanceId = 4;
+    string vendorId = 5;
+    string sessionId = 6;
+}
+
+message Utm {
+    string campaign = 1;
+    string source = 2;
+    string medium = 3;
+    string term = 4;
+    string content = 5;
+}
+
+message GoogleIds {
+    string gclid = 1;
+    string dclid = 2;
+}
+
+message FbIds {
+    string fbClickId = 1;
+    string fbBrowserId = 2;
+}

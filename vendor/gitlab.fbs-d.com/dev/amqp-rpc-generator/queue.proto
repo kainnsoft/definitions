@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package queue;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "gitlab.fbs-d.com/dev/amqp-rpc-generator;amqp_rpc_generator";
+
+extend google.protobuf.MethodOptions {
+  Queue queue = 1001;
+}
+
+enum Type {
+  RPC = 0;
+  Exchange = 1;
+  QueueType = 2;
+  TrialDelay = 3;
+  BatchTrialDelay = 4;
+}
+
+message Queue {
+  Type Type = 1;
+  string Name = 2;
+  string ExchangeName = 3;
+  string ExchangeType = 4;
+  string RoutingKey = 5;
+  bool OnlyClient = 6;
+  int64 Trials = 7;
+  int64 Delay = 8;
+  bool EventSkipErrors = 9;
+}

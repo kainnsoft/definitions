@@ -1,0 +1,70 @@
+include:
+  - project: 'dvps/inventory'
+    ref: master
+    file: '.included.yml'
+
+stages:
+  - dep
+  - build
+
+variables:
+  CI_GO_IMAGE: "dr.fbs-d.com:5000/golang-ci:1.14-stretch"
+  GOFLAGS: ""
+  GOPATH: "${CI_PROJECT_DIR}/.cache"
+  GO111MODULE: "on"
+  GOPRIVATE: "gitlab.fbs-d.com"
+  CI_APP_IMAGE: "${DOCKER_REGISTRY_SERVER}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}"
+  CI_ANSISTRANO_IMAGE: "2tvenom/ansible"
+  ANSIBLE_FORCE_COLOR: "true"
+
+cache:
+  key: modcache
+  paths:
+    - .cache
+
+dep:
+  variables:
+    SSH_PRIVATE_KEY: "${GITLAB_SSH_PRIVATE_KEY}"
+  stage: dep
+  image: "${CI_GO_IMAGE}"
+  extends: .before_script
+  script:
+    - go mod download
+  only:
+    - merge_requests
+    - tags
+
+test:
+  stage: build
+  image: "${CI_GO_IMAGE}"
+  coverage: "/\\(statements\\)\\s+\\d+\\.\\d+\\%/"
+  script:
+    - rm -rf report.xml coverage.xml
+    - '[ -e .coverignore ] || touch .coverignore'
+    - go test -coverprofile=coverage.out -covermode=atomic -coverpkg=$(if [ $(wc -l .coverignore | awk '{ print $1 }') = 0 ]; then echo "./..."; else echo $(go list ./... | egrep -v "$(cat .coverignore | paste -sd "|" -)" | paste -sd "," -); fi) -v ./... 2>&1 | go-junit-report > report.xml
+    - go tool cover -func=coverage.out
+    - gocover-cobertura < coverage.out > coverage.xml
+    - sed -i.bak -e 's/filename="'"$(echo "${CI_SERVER_HOST}/${CI_PROJECT_PATH}/" | sed -e 's/\//\\\//g')"'/filename="/' coverage.xml
+  artifacts:
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  only:
+    - merge_requests
+    - tags
+
+code_quality:
+  image: "${CI_GO_IMAGE}"
+  script:
+    - golangci-lint run --out-format code-climate | tee gl-code-quality-report.json | jq -r '.[] | "\(.location.path):\(.location.lines.begin) \(.description)"'
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+    paths:
+      - gl-code-quality-report.json
+  stage: build
+  only:
+    - merge_requests
+    - tags

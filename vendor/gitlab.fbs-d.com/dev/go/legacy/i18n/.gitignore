@@ -1,0 +1,20 @@
+# logs
+*.log
+
+# pids
+*.pid
+
+# phpstorm project files
+.idea
+
+# Mac DS_Store Files
+.DS_Store
+
+# bin files
+bin
+
+# pkg files
+pkg
+
+# editorconfig
+.editorconfig

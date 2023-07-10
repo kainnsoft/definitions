@@ -1,0 +1,8 @@
+#!/bin/bash
+
+docker run --rm -it \
+    -v $(pwd):/app \
+    -v ~/.ssh:/home/user/.ssh \
+    -v $(go env GOPATH)/pkg:/go/pkg \
+    -u 1000 \
+    dr.fbs-d.com:5000/gogen:1.20 go generate

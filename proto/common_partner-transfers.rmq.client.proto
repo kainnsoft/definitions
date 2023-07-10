@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "gitlab.fbs-d.com/dev/amqp-rpc-generator/queue.proto";
+import "gitlab.fbs-d.com/definitions/client/client.proto";
+
+package partner_transfers_defs;
+option go_package = "gitlab.fbs-d.com/backend/legacy/common/partner-transfers/definitions/proto;partner_transfers_defs";
+
+service RMQClient {
+  rpc StartTwoPhasedPartnerTransferV1 (StartTwoPhasedPartnerTransferV1Request) returns (StartTwoPhasedPartnerTransferV1Response) {
+    option (queue.queue) = {
+      Type: RPC
+      Name: "r.partner-transfers.StartTwoPhasedPartnerTransfer.v1"
+    };
+  }
+
+  rpc CompleteTwoPhasedPartnerTransferV1 (CompleteTwoPhasedPartnerTransferV1Request) returns (CompleteTwoPhasedPartnerTransferV1Response) {
+    option (queue.queue) = {
+      Type: RPC
+      Name: "r.partner-transfers.CompleteTwoPhasedPartnerTransfer.v1"
+    };
+  }
+}
+
+message StartTwoPhasedPartnerTransferV1Request {
+  string token = 1;
+  client.Client client = 2;
+  StartTwoPhasedPartnerTransferV1RequestBody body = 3;
+}
+
+message StartTwoPhasedPartnerTransferV1RequestBody {
+  string transferKey = 1;
+  int64 fromAccountId = 2;
+  int64 toAccountId = 3;
+  int64 amount = 4;
+}
+
+message StartTwoPhasedPartnerTransferV1Response {
+  int64 operationId = 1;
+}
+
+message CompleteTwoPhasedPartnerTransferV1Request {
+  string token = 1;
+  client.Client client = 2;
+  CompleteTwoPhasedPartnerTransferV1RequestBody body = 3;
+}
+
+message CompleteTwoPhasedPartnerTransferV1RequestBody {
+  int64 operationId = 1;
+}
+
+message CompleteTwoPhasedPartnerTransferV1Response {}
