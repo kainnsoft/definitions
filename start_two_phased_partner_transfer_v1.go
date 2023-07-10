@@ -1,4 +1,4 @@
-package definitions
+package defs
 
 import (
 	"encoding/json"

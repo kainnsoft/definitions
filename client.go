@@ -1,4 +1,4 @@
-package definitions
+package defs
 
 import (
 	excp "gitlab.fbs-d.com/dev/go/legacy/exceptions"
