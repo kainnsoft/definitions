@@ -1,4 +1,4 @@
-package partner_transfers_defs
+package definitions
 
 import (
 	excp "gitlab.fbs-d.com/dev/go/legacy/exceptions"

@@ -1,4 +1,4 @@
-package partner_transfers_defs
+package definitions
 
 //go:generate mockgen -source client.go -destination ./mocks/client_mocks.go -package mocks
 //go:generate protoc -I=. -I=./vendor --go_opt=paths=source_relative --go_out=. --amqprpc3_out=. proto/common_partner-transfers.rmq.client.proto

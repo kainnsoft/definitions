@@ -1,4 +1,4 @@
-package partner_transfers_defs
+package definitions
 
 import (
 	"encoding/json"
